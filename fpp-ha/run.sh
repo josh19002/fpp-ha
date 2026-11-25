@@ -192,7 +192,8 @@ fi
 # ------------------------------------------------------------------
 HTTP_PORT=80
 if [ -f /data/options.json ]; then
-    PARSED_PORT=$(grep -o '"http_port"[[:space:]]*:[[:space:]]*[0-9]*' /data/options.json | grep -o '[0-9]*' || true)
+    echo "[fpp] Raw options.json: $(cat /data/options.json)" >&2
+    PARSED_PORT=$(python3 -c 'import json; d=json.load(open("/data/options.json")); print(d.get("http_port", 80))' 2>/dev/null || echo "80")
     if [ -n "$PARSED_PORT" ]; then
         HTTP_PORT="$PARSED_PORT"
     fi
