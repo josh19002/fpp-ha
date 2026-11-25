@@ -33,7 +33,7 @@ privileged:
   - NET_RAW           # raw sockets (DDP, sACN/E1.31)
   - IPC_LOCK          # lock memory for audio streaming
 
-webui: "http://[HOST]:[OPTION:http_port]"
+webui: "http://[HOST]:[PORT:80]"
 panel_icon: mdi:led-strip-variant
 
 map:
