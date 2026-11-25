@@ -198,11 +198,15 @@ if [ -f /data/options.json ]; then
     fi
 fi
 
+echo "[fpp] Target Apache HTTP port: $HTTP_PORT" >&2
+
 if [ "$HTTP_PORT" != "80" ]; then
-    echo "[fpp] Configuring Apache to listen on port $HTTP_PORT..." >&2
+    echo "[fpp] Updating Apache configs to port $HTTP_PORT..." >&2
     sed -i "s/Listen 80/Listen $HTTP_PORT/g" /etc/apache2/ports.conf || true
-    sed -i "s/:80/:$HTTP_PORT/g" /etc/apache2/sites-enabled/*.conf || true
+    find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/:80>/:$HTTP_PORT>/g" {} + || true
+    find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/Listen 80$/Listen $HTTP_PORT/g" {} + || true
 fi
+
 /usr/sbin/apache2ctl -D FOREGROUND &
 APACHE_PID=$!
 echo "[fpp] Apache started (PID $APACHE_PID)" >&2
