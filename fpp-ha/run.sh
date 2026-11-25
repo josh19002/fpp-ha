@@ -213,11 +213,11 @@ echo "[fpp] Target Apache HTTP port: $HTTP_PORT" >&2
 
 if [ "$HTTP_PORT" != "80" ]; then
     echo "[fpp] Updating Apache configs to port $HTTP_PORT..." >&2
-    # Replace Listen 80, Listen *:80, Listen 0.0.0.0:80, Listen [::]:80, and <VirtualHost *:80>
     find -L /etc/apache2/ -type f -name "*.conf" -exec sed -i -E "s/(Listen[[:space:]]+([^[:space:]]*:)?|:[*]?|VirtualHost[[:space:]]+[^:]*:)80([[:space:]>]|$)/\1${HTTP_PORT}\3/g" {} + || true
-    # Print any remaining port 80 lines for verification
-    echo "[fpp] Remaining port 80 refs in /etc/apache2:" >&2
-    grep -rnE "(^|[^0-9])80([^0-9]|$)" /etc/apache2/ >&2 || echo "[fpp] None found!" >&2
+
+    echo "[fpp] Updating FPP web localhost references to port $HTTP_PORT..." >&2
+    find /opt/fpp/www/ -type f \( -name "*.php" -o -name "*.js" \) -exec sed -i -E \
+        "s|http://localhost(:80)?([/'\"])|http://localhost:${HTTP_PORT}\2|g; s|http://127\.0\.0\.1(:80)?([/'\"])|http://127.0.0.1:${HTTP_PORT}\2|g" {} + || true
 fi
 
 /usr/sbin/apache2ctl -D FOREGROUND &
