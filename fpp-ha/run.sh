@@ -191,12 +191,22 @@ fi
 # Configure Apache HTTP Port from Home Assistant options
 # ------------------------------------------------------------------
 HTTP_PORT=80
+OPTIONS_FILE=""
+
 if [ -f /data/options.json ]; then
-    echo "[fpp] Raw options.json: $(cat /data/options.json)" >&2
-    PARSED_PORT=$(python3 -c 'import json; d=json.load(open("/data/options.json")); print(d.get("http_port", 80))' 2>/dev/null || echo "80")
+    OPTIONS_FILE="/data/options.json"
+elif [ -f /home/fpp/media/options.json ]; then
+    OPTIONS_FILE="/home/fpp/media/options.json"
+fi
+
+if [ -n "$OPTIONS_FILE" ]; then
+    echo "[fpp] Found options at $OPTIONS_FILE: $(cat "$OPTIONS_FILE")" >&2
+    PARSED_PORT=$(python3 -c "import json; d=json.load(open('$OPTIONS_FILE')); print(d.get('http_port', 80))" 2>/dev/null || echo "80")
     if [ -n "$PARSED_PORT" ]; then
         HTTP_PORT="$PARSED_PORT"
     fi
+else
+    echo "[fpp] WARNING: options.json not found in /data or /home/fpp/media" >&2
 fi
 
 echo "[fpp] Target Apache HTTP port: $HTTP_PORT" >&2
@@ -207,6 +217,7 @@ if [ "$HTTP_PORT" != "80" ]; then
     find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/:80>/:$HTTP_PORT>/g" {} + || true
     find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/Listen 80$/Listen $HTTP_PORT/g" {} + || true
 fi
+
 
 /usr/sbin/apache2ctl -D FOREGROUND &
 APACHE_PID=$!
