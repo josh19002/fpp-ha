@@ -213,11 +213,12 @@ echo "[fpp] Target Apache HTTP port: $HTTP_PORT" >&2
 
 if [ "$HTTP_PORT" != "80" ]; then
     echo "[fpp] Updating Apache configs to port $HTTP_PORT..." >&2
-    sed -i "s/Listen 80/Listen $HTTP_PORT/g" /etc/apache2/ports.conf || true
-    find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/:80>/:$HTTP_PORT>/g" {} + || true
-    find /etc/apache2/ -type f -name "*.conf" -exec sed -i "s/Listen 80$/Listen $HTTP_PORT/g" {} + || true
+    # Replace Listen 80, Listen *:80, Listen 0.0.0.0:80, Listen [::]:80, and <VirtualHost *:80>
+    find -L /etc/apache2/ -type f -name "*.conf" -exec sed -i -E "s/(Listen[[:space:]]+([^[:space:]]*:)?|:[*]?|VirtualHost[[:space:]]+[^:]*:)80([[:space:]>]|$)/\1${HTTP_PORT}\3/g" {} + || true
+    # Print any remaining port 80 lines for verification
+    echo "[fpp] Remaining port 80 refs in /etc/apache2:" >&2
+    grep -rnE "(^|[^0-9])80([^0-9]|$)" /etc/apache2/ >&2 || echo "[fpp] None found!" >&2
 fi
-
 
 /usr/sbin/apache2ctl -D FOREGROUND &
 APACHE_PID=$!
