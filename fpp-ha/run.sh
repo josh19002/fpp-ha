@@ -187,7 +187,22 @@ if [ -n "$PHP_FPM" ]; then
 else
     echo "[fpp] WARNING: php-fpm binary not found" >&2
 fi
+# ------------------------------------------------------------------
+# Configure Apache HTTP Port from Home Assistant options
+# ------------------------------------------------------------------
+HTTP_PORT=80
+if [ -f /data/options.json ]; then
+    PARSED_PORT=$(grep -o '"http_port"[[:space:]]*:[[:space:]]*[0-9]*' /data/options.json | grep -o '[0-9]*' || true)
+    if [ -n "$PARSED_PORT" ]; then
+        HTTP_PORT="$PARSED_PORT"
+    fi
+fi
 
+if [ "$HTTP_PORT" != "80" ]; then
+    echo "[fpp] Configuring Apache to listen on port $HTTP_PORT..." >&2
+    sed -i "s/Listen 80/Listen $HTTP_PORT/g" /etc/apache2/ports.conf || true
+    sed -i "s/:80/:$HTTP_PORT/g" /etc/apache2/sites-enabled/*.conf || true
+fi
 /usr/sbin/apache2ctl -D FOREGROUND &
 APACHE_PID=$!
 echo "[fpp] Apache started (PID $APACHE_PID)" >&2
