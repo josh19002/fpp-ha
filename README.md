@@ -3,8 +3,8 @@
 
 **FPP-OS for PC's and Virtual Machines can be found at the [FPP-OS repo](https://github.com/jessica12ryan/fpp-os)**
 
-&emsp;&emsp;![Version](https://img.shields.io/badge/dynamic/yaml?label=Version&query=%24.upstream_version&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjessica12ryan%2Ffpp-ha%2Fmaster%2Ffpp-ha%2Fupdater.json)
-![Update](https://img.shields.io/badge/dynamic/json?label=Updated&query=%24.last_update&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjessica12ryan%2Ffpp-ha%2Fmaster%2Ffpp-ha%2Fupdater.json)
+&emsp;&emsp;![Version](https://img.shields.io/badge/dynamic/yaml?label=Version&query=%24.upstream_version&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjosh19002%2Ffpp-ha%2Fmaster%2Ffpp-ha%2Fupdater.json)
+![Update](https://img.shields.io/badge/dynamic/json?label=Updated&query=%24.last_update&url=https%3A%2F%2Fraw.githubusercontent.com%2Fjosh19002%2Ffpp-ha%2Fmaster%2Ffpp-ha%2Fupdater.json)
 ![aarch64][aarch64-badge]
 ![amd64][amd64-badge]
 
@@ -26,7 +26,7 @@ All issues from this installation should be logged to THIS repo.
  - Click the Add icon (bottom right).
  - Paste the following URL and click Add:
 ```
-https://github.com/jessica12ryan/fpp-ha
+https://github.com/josh19002/fpp-ha
 ```
 
 ## Installation
